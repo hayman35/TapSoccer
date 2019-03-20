@@ -32,7 +32,6 @@ ball.y = display.contentCenterY
 ball.myName = "ball"
 
 
-
 local scoreText = score.init(
 {
     fontSize = 40,
@@ -46,18 +45,25 @@ local GameoverLabel = display.newText("Game Over",display.contentCenterX, 200, n
 GameoverLabel:setFillColor(0,0,1)
 GameoverLabel.isVisible = false
 
-tapToStartLabel = display.newText("Tap Here To Start",display.contentCenterX, 450, native.systemFont, 40)
+local highScore = display.newText("HighScore:"..score.load(),display.contentCenterX, 299, native.systemFont, 40)
+highScore:setFillColor(0,0,1)
+highScore.isVisible = false
+
+
+local tapToStartLabel = display.newText("Tap Here To Start",display.contentCenterX, 450, native.systemFont, 40)
 tapToStartLabel:setFillColor(0,0,1)
 
 
 -- Starting the game
 local function startGame(event)
+  GameoverLabel.isVisible = false
+  highScore.isVisible = false
   ball.x = display.contentCenterX
   ball.y = display.contentCenterY
   if event.phase == "began" then
   		-- Start the game here
   	elseif event.phase == "ended" then
-      display.remove(tapToStartLabel)
+      tapToStartLabel.isVisible = false
     end
 physics.start()
 physics.setGravity( 0, 20 )
@@ -77,11 +83,8 @@ score.add(1)
 end
 ball:addEventListener( "tap" )
 
+
 local function onLocalCollision( self, event )
-  highScore = display.newText("HighScore:"..score.load(),display.contentCenterX, 299, native.systemFont, 40)
-  highScore:setFillColor(0,0,1)
-  highScore.isVisible = false
-  
     if ( event.phase == "began" ) then
       current = score.get()
       high = score.load()
@@ -93,9 +96,8 @@ local function onLocalCollision( self, event )
         physics.pause()
         GameoverLabel.isVisible = true
         highScore.isVisible = true
-
-      --startGame()
     end
+    tapToStartLabel.isVisible = true
 end
 platform.collision = onLocalCollision
 platform:addEventListener( "collision" )
